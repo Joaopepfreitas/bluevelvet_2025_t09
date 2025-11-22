@@ -14,10 +14,15 @@ create table `db`.`authorities` (
 );
 create unique index ix_auth_username on authorities (username,authority);
 
+-- usuário 'felipechoi', senha 'lipeadmin' (convertida com hash blowfish para evitar ataques de linha de BD)
 INSERT INTO db.users
 (username, password, enabled)
 VALUES('felipechoi', '{bcrypt}$2a$10$Ha3IM.uQ8tTTqTZ8KDFgn.XBMF5uWjjwG1Gh7Xdsj6kwORZrwMuCa
 ', 1);
+
+INSERT INTO db.authorities
+(username, authority)
+VALUES('felipechoi', 'admin');
 
 -- PRODUTOS: criar schema para álbuns, músicas, autores, etc.
 CREATE TABLE `db`.`product` (
