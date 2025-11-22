@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: "Blue Velvet Music Store"
+  datasource:
+    username: rey
+    password: rey-pass
+    url: jdbc:mysql://localhost:32768
+    driver-class-name: com.mysql.cj.jdbc.Driver
