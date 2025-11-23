@@ -35,13 +35,19 @@ INSERT INTO users
 (name, email, password, `role`, enabled)
 VALUES('fellipe rey', 'rey@nowhere.not', '$2a$12$hV1VunyHo57JJJ/kE16j8.TnIKSgphLj.CT7BVfsq/eNRZfcspYAS', 'Administrator', 1);
 
+INSERT INTO users
+(name, email, password, `role`, enabled)
+VALUES('Charnal brandos', 'gordoseditor@gordosburger.br', '$2a$12$H4PBkG55IuIGR1i5x8xhDuIUNjo1TNF0kd6Z9ExdRiTo40jrNh6c6', 'Editor', 1);
+
 INSERT INTO authorities
 (ref_user, authority)
 VALUES(1, 'ROLE_Administrator');
 INSERT INTO authorities
 (ref_user, authority)
 VALUES(2, 'ROLE_Administrator');
-
+INSERT INTO authorities
+(ref_user, authority)
+VALUES(3, 'ROLE_Editor');
 
 -- PRODUTOS: criar schema para álbuns, músicas, autores, etc.
 CREATE TABLE `product` (

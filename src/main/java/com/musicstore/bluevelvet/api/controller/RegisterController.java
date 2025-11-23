@@ -5,6 +5,7 @@ import com.musicstore.bluevelvet.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import jakarta.validation.Valid; // Importante para validação do DTO
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult; // Para lidar com erros de validação
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Log4j2
 @Controller
 @RequiredArgsConstructor // Para injetar UserService
+
+@PreAuthorize("hasRole('Administrator')")
 public class RegisterController {
 
     private final com.musicstore.bluevelvet.domain.service.UserService userService; // Injetar o Serviço de Usuário

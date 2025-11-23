@@ -90,7 +90,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
           return http
                   .authorizeHttpRequests(auth -> auth
-                          .requestMatchers("/login", "register", "/css/**", "/js/**",
+                          .requestMatchers("/login", "/css/**", "/js/**",
                                   "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                           .anyRequest().authenticated()
                   )
