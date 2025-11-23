@@ -1,28 +1,46 @@
 -- USUÁRIOS: criar schema para credenciais de login de
 -- administradores, gerentes, clientes, etc.
 
-create table `db`.`users`(
-	username VARCHAR(50) not null primary key,
-	password VARCHAR(500) not null,
-	enabled boolean not null
+-- db.users definition
+
+CREATE TABLE db.users (
+	id BIGINT auto_increment NOT NULL,
+	name varchar(100) UNIQUE NOT NULL,
+	email varchar(100) NOT NULL,
+	password varchar(100) NOT NULL,
+	`role` varchar(100) NOT NULL,
+	enabled boolean NOT NULL,
+	CONSTRAINT users_pk PRIMARY KEY (id)
 );
 
+--create table `db`.`users`(
+--	username VARCHAR(50) not null primary key,
+--	password VARCHAR(500) not null,
+--	enabled boolean not null
+--);
+
 create table `db`.`authorities` (
-	username VARCHAR(50) not null,
+	ref_user BIGINT not null,
 	authority VARCHAR(50) not null,
-	constraint fk_authorities_users foreign key(username) references users(username)
+	constraint fk_authorities_users foreign key(ref_user) references users(id)
 );
-create unique index ix_auth_username on authorities (username,authority);
+create unique index ix_auth_username on authorities (ref_user,authority);
+
 
 -- usuário 'felipechoi', senha 'lipeadmin' (convertida com hash blowfish para evitar ataques de linha de BD)
 INSERT INTO db.users
-(username, password, enabled)
-VALUES('felipechoi', '{bcrypt}$2a$10$Ha3IM.uQ8tTTqTZ8KDFgn.XBMF5uWjjwG1Gh7Xdsj6kwORZrwMuCa
-', 1);
+(name, email, password, `role`, enabled)
+VALUES('felipechoi', 'felipe.choi@bluevelvet', '$2a$10$Ha3IM.uQ8tTTqTZ8KDFgn.XBMF5uWjjwG1Gh7Xdsj6kwORZrwMuCa', 'admin', true);
 
 INSERT INTO db.authorities
-(username, authority)
-VALUES('felipechoi', 'admin');
+(ref_user, authority)
+VALUES(1, 'admin');
+
+---- usuário 'felipechoi', senha 'lipeadmin' (convertida com hash blowfish para evitar ataques de linha de BD)
+--INSERT INTO db.users
+--(username, password, enabled)
+--VALUES('felipechoi', '{bcrypt}$2a$10$Ha3IM.uQ8tTTqTZ8KDFgn.XBMF5uWjjwG1Gh7Xdsj6kwORZrwMuCa
+--', 1);
 
 -- PRODUTOS: criar schema para álbuns, músicas, autores, etc.
 CREATE TABLE `db`.`product` (
