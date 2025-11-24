@@ -209,3 +209,16 @@ td:nth-child(2) {
         font-size: 14px;
     }
 }
+
+/* =========================================
+   7. Página de login
+   ========================================= */
+#login_page_container{
+    background-image: url("http://localhost:32791/pics/bouncer.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+#login-form{
+    background-color: #EFEFEFAF;
+}

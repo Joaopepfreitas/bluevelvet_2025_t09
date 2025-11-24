@@ -8,7 +8,7 @@
 
 </head>
 <body>
-<div class="container">
+<div class="container" id="login_page_container">
     <div th:if="${param.error}">
         Invalid username and password.</div>
     <div th:if="${param.logout}">
@@ -37,7 +37,7 @@
             <button type="submit">Login</button>
         </div>
     </form>
-
+    <img class="centered" src="http://localhost:32791/pics/slimy.jpg"/>
 </div>
 </body>
 </html>
