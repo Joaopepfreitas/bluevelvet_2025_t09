@@ -18,5 +18,13 @@ services:
       - mydb:/var/lib/mysql
       - ./src/main/resources/static/initial.sql:/docker-entrypoint-initdb.d/initial.sql
 
+  lighttpd:
+    image: sebp/lighttpd
+    volumes:
+      - ./src/main/resources/mass_storage:/var/www/localhost/htdocs
+    ports:
+      - "32791:80"
+    tty: true
+
 volumes:
   mydb:
