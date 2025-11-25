@@ -114,3 +114,17 @@ INSERT INTO `product_detail` (`id`, `name`, `value`, `product_id`) VALUES ('12',
 INSERT INTO `product_detail` (`id`, `name`, `value`, `product_id`) VALUES ('13', 'Track 13', 'The bell gets out of the way', '1');
 INSERT INTO `product_detail` (`id`, `name`, `value`, `product_id`) VALUES ('14', 'Track 14', 'Chain gang island', '1');
 INSERT INTO `product_detail` (`id`, `name`, `value`, `product_id`) VALUES ('15', 'Track 15', 'My (limited) engagement', '1');
+
+-- CATEGORIAS: categorias de produtos (serviços de mídia pública tendem a chamar isso de 'tags')
+
+CREATE TABLE db.Category (
+	id BIGINT auto_increment NOT NULL,
+	name varchar(100) NOT NULL,
+	parent_id BIGINT NULL,
+	picture_uuid varchar(100) NULL,
+	CONSTRAINT Category_PK PRIMARY KEY (id),
+	CONSTRAINT Category_UNIQUE UNIQUE KEY (name)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_0900_ai_ci;
