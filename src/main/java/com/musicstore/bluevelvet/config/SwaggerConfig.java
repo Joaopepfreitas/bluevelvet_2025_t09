@@ -17,11 +17,15 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList(schemeName))
                 .components(new Components()
-                        .addSecuritySchemes(schemeName, new SecurityScheme()
-                                .name(schemeName)
-                                .type(SecurityScheme.Type.HTTP)
-                                .in(SecurityScheme.In.HEADER)
-                        ));
+//                        .addSecuritySchemes(schemeName, new SecurityScheme()
+//                                .name(schemeName)
+//                                .type(SecurityScheme.Type.HTTP)
+//                                .in(SecurityScheme.In.HEADER)
+//                        )
+                        .addSecuritySchemes("basicScheme",
+                                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic"))
+
+                );
     }
 
 }
