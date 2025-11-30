@@ -5,6 +5,8 @@ import com.musicstore.bluevelvet.api.request.ProductRequest;
 import com.musicstore.bluevelvet.api.response.CategoryResponse;
 import com.musicstore.bluevelvet.api.response.ProductResponse;
 import com.musicstore.bluevelvet.domain.exception.BlobNotFoundException;
+import com.musicstore.bluevelvet.domain.exception.CategoryNotFoundException;
+import com.musicstore.bluevelvet.domain.exception.InvalidDataOperationException;
 import com.musicstore.bluevelvet.domain.service.CategoryService;
 import com.musicstore.bluevelvet.domain.service.ProductService;
 import com.musicstore.bluevelvet.infrastructure.entity.Category;
@@ -32,7 +34,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('Administrator') or hasRole('Editor')")
     @GetMapping("/{id}")
-    @Operation(summary = "Fetch category by id", description = "Fetch a product from the Blue Velvet Music Store")
+    @Operation(summary = "Fetch category by id", description = "Fetch a category from the Blue Velvet Music Store")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) {
         log.info("Request received to fetch a product by id {}", id);
 
@@ -40,7 +42,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all categories", description = "Get all products from the Blue Velvet Music Store")
+    @Operation(summary = "Get all categories", description = "Get all product categories from the Blue Velvet Music Store")
     public ResponseEntity<Page<CategoryResponse>> getAllCategories(Pageable pageable) {
         log.info("Request received to fetch all products");
 
@@ -48,7 +50,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete category by id", description = "Delete a product from the Blue Velvet Music Store")
+    @Operation(summary = "Delete category by id", description = "Delete a category from the Blue Velvet Music Store")
     public ResponseEntity<Void> deleteCategoryById(@PathVariable Long id) {
         log.info("Request received to delete a product by id {}", id);
 
@@ -58,7 +60,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    @Operation(summary = "Create a new category", description = "Create a product for the Blue Velvet Music Store")
+    @Operation(summary = "Create a new category", description = "Create a category of products for the Blue Velvet Music Store")
     public ResponseEntity<CategoryResponse> createProduct(@RequestBody CategoryRequest request){
         log.info("Request received to create a new product. The request is {}", request);
 
@@ -66,10 +68,9 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update a category", description = "Update a product from the Blue Velvet Music Store")
+    @Operation(summary = "Update a category", description = "Update a category of products from the Blue Velvet Music Store")
     public ResponseEntity<CategoryResponse> updateProductById(@PathVariable Long id, @RequestBody CategoryRequest request) {
         log.info("Request received to update the product with id {} with the request {}", id, request);
-
         return ResponseEntity.ok(service.updateCategory(id, request));
     }
 
@@ -87,9 +88,16 @@ public class CategoryController {
         }
     }
 
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<?> handleInvalidData(CategoryNotFoundException exc) { return ResponseEntity.notFound().build(); }
+
+
     @ExceptionHandler(BlobNotFoundException.class)
     public ResponseEntity<?> handleBlobNotFound(BlobNotFoundException exc) {
         return ResponseEntity.notFound().build();
     }
+
+    @ExceptionHandler(InvalidDataOperationException.class)
+    public ResponseEntity<?> handleInvalidData(InvalidDataOperationException exc) { return ResponseEntity.badRequest().body(exc.getMessage()); }
 
 }

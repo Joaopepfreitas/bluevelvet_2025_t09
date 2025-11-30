@@ -3,6 +3,7 @@ package com.musicstore.bluevelvet.domain.service.impl;
 import com.musicstore.bluevelvet.api.request.CategoryRequest;
 import com.musicstore.bluevelvet.api.response.CategoryResponse;
 import com.musicstore.bluevelvet.domain.exception.CategoryNotFoundException;
+import com.musicstore.bluevelvet.domain.exception.InvalidDataOperationException;
 import com.musicstore.bluevelvet.domain.service.CategoryService;
 import com.musicstore.bluevelvet.infrastructure.entity.Category;
 import com.musicstore.bluevelvet.infrastructure.repository.CategoryRepository;
@@ -41,6 +42,13 @@ public class CategoryServiceImpl implements CategoryService {
         response.setPictureUrl(getBasePictureUrl() + entity.getPicture_uuid() + ".webp");
         return response;
     }
+
+    private Category entityFromRequest(CategoryRequest request){
+        Category category= new Category();
+        category.setId (request.getId());
+        category.setName(request.getName());
+        return category;
+    }
     
     
     public CategoryResponse findById(Long id){
@@ -69,7 +77,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public CategoryResponse updateCategory(Long id, CategoryRequest request){
-        return null;
+
+        Optional<Category> fetched = repository.findById(id);
+        if (fetched.isEmpty())
+            throw new CategoryNotFoundException("Categoria não existe.");
+        Category existing=fetched.get();
+        if (request.getName() == null){
+            throw new InvalidDataOperationException("Campo \"name\" obrigatório.");
+        }
+        existing.setName(request.getName());
+        existing.setParent_id(request.getParentId());
+        existing = repository.save(existing);
+        CategoryResponse response = entityToResponse(existing);
+        return response;
+
     }
 
     public CategoryResponse setPictureOfCategory(Long id, MultipartFile file) throws Exception {
@@ -96,6 +117,7 @@ public class CategoryServiceImpl implements CategoryService {
         return response;
         
     }
+
 
 
 }

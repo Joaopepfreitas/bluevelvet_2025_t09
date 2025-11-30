@@ -2,8 +2,6 @@ package com.musicstore.bluevelvet.api.request;
 
 import lombok.*;
 
-import java.util.Optional;
-
 @Getter
 @Setter
 @Builder
@@ -12,8 +10,10 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CategoryRequest {
 
+    private Long id;
+
     private String name;
 
-    private Long parent_Id;
+    private Long parentId;
 
 }
