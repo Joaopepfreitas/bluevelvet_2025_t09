@@ -9,13 +9,11 @@ import com.musicstore.bluevelvet.infrastructure.entity.Category;
 import com.musicstore.bluevelvet.infrastructure.repository.CategoryRepository;
 import com.musicstore.bluevelvet.domain.service.MassStorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,19 +32,24 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository repository;
 
-    private CategoryResponse entityToResponse(Category entity){
+    private CategoryResponse responseFromEntity(Category entity){
         CategoryResponse response = new CategoryResponse();
         response.setName(entity.getName());
         response.setId(entity.getId());
         response.setParentId(entity.getParent_id());
-        response.setPictureUrl(getBasePictureUrl() + entity.getPicture_uuid() + ".webp");
+        if(entity.getPicture_uuid() != null) {
+            response.setPictureUrl(getBasePictureUrl() + entity.getPicture_uuid() + ".webp");
+        }
         return response;
     }
 
     private Category entityFromRequest(CategoryRequest request){
         Category category= new Category();
-        category.setId (request.getId());
+        //HACK(?): setId() throws nullpointer exception, although parent_id does not...
+        if(request.getId() != null)
+            category.setId (request.getId());
         category.setName(request.getName());
+        category.setParent_id(request.getParentId());
         return category;
     }
     
@@ -60,7 +63,9 @@ public class CategoryServiceImpl implements CategoryService {
         response.setName(existing.getName());
         response.setId(existing.getId());
         response.setParentId(existing.getParent_id());
-        response.setPictureUrl(getBasePictureUrl() + existing.getPicture_uuid() + ".webp");
+        if(existing.getPicture_uuid() != null) {
+            response.setPictureUrl(getBasePictureUrl() + existing.getPicture_uuid() + ".webp");
+        }
         return response;
     }
 
@@ -69,13 +74,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public void deleteById(Long id){
-
+        Optional<Category> fetched = repository.findById(id);
+        if (fetched.isEmpty())
+            throw new CategoryNotFoundException("Categoria não existe.");
+        repository.delete(fetched.get());
     }
 
-    public CategoryResponse createCategory(CategoryRequest request){
-        return null;
+    public CategoryResponse createCategory(CategoryRequest request) {
+        Category category = entityFromRequest(request);
+        category = repository.save(category);
+        return responseFromEntity(category);
     }
-
     public CategoryResponse updateCategory(Long id, CategoryRequest request){
 
         Optional<Category> fetched = repository.findById(id);
@@ -88,7 +97,7 @@ public class CategoryServiceImpl implements CategoryService {
         existing.setName(request.getName());
         existing.setParent_id(request.getParentId());
         existing = repository.save(existing);
-        CategoryResponse response = entityToResponse(existing);
+        CategoryResponse response = responseFromEntity(existing);
         return response;
 
     }
@@ -112,7 +121,7 @@ public class CategoryServiceImpl implements CategoryService {
         existing.setPicture_uuid(generatedFileName);
         repository.save(existing);
 
-        CategoryResponse response = entityToResponse(existing);
+        CategoryResponse response = responseFromEntity(existing);
         response.setPictureUrl(getBasePictureUrl() + generatedFileName + ".webp");
         return response;
         
