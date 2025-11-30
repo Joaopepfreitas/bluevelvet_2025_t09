@@ -3,6 +3,7 @@ package com.musicstore.bluevelvet.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -89,16 +90,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
           return http
+                  .csrf(csrf -> csrf.disable())
+                  .httpBasic(Customizer.withDefaults())
                   .authorizeHttpRequests(auth -> auth
                           .requestMatchers("/login", "/css/**", "/js/**",
                                   "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                           .anyRequest().authenticated()
                   )
-                   .formLogin((form) -> form
-                           .loginPage("/login")
-                           .loginProcessingUrl("/perform_login")
-                           .permitAll()
-                   ).build() ;
+//                   .formLogin((form) -> form
+//                           .loginPage("/login")
+//                           .loginProcessingUrl("/perform_login")
+//                           .permitAll()
+//                   )
+                  .build() ;
     }
 
     @Bean
