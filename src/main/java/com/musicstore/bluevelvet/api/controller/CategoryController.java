@@ -2,10 +2,12 @@ package com.musicstore.bluevelvet.api.controller;
 
 import com.musicstore.bluevelvet.api.request.CategoryRequest;
 import com.musicstore.bluevelvet.api.response.CategoryResponse;
+import com.musicstore.bluevelvet.api.response.ProductResponse;
 import com.musicstore.bluevelvet.domain.exception.BlobNotFoundException;
 import com.musicstore.bluevelvet.domain.exception.CategoryNotFoundException;
 import com.musicstore.bluevelvet.domain.exception.InvalidDataOperationException;
 import com.musicstore.bluevelvet.domain.service.CategoryService;
+import com.musicstore.bluevelvet.domain.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +27,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class CategoryController {
 
     private final CategoryService service;
+    private final ProductService productService;
 
     @PreAuthorize("hasRole('Administrator') or hasRole('Editor')")
     @GetMapping("/{id}")
     @Operation(summary = "Fetch category by id", description = "Fetch a category from the Blue Velvet Music Store")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) {
-        log.info("Request received to fetch a product by id {}", id);
+        log.info("Request received to fetch a category by id {}.", id);
 
         return ResponseEntity.ok(service.findById(id));
     }
@@ -38,9 +41,17 @@ public class CategoryController {
     @GetMapping
     @Operation(summary = "Get all categories", description = "Get all product categories from the Blue Velvet Music Store")
     public ResponseEntity<Page<CategoryResponse>> getAllCategories(Pageable pageable) {
-        log.info("Request received to fetch all products");
+        log.info("Request received to fetch all categories.");
 
         return ResponseEntity.ok(service.findAll(pageable));
+    }
+
+    @GetMapping("/products_of_category/{id}/")
+    @Operation(summary = "Get all Products of a category", description = "Get all products that belong in a category with a given ID.")
+    public ResponseEntity<Page<ProductResponse>> getAllCategories(@PathVariable Long id, Pageable pageable) {
+        log.info("Request received to fetch all products of category ID {}.", id);
+
+        return ResponseEntity.ok(productService.findByCategoryId(id, pageable));
     }
 
     @DeleteMapping("/{id}")

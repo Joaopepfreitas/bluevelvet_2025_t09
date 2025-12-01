@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -56,5 +57,12 @@ public class Product implements Serializable {
 
     @OneToMany(mappedBy = "product")
     private List<ProductDetail> productDetails;
+
+    @ManyToMany
+    @JoinTable(
+            name = "category_of_product",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories;
 
 }

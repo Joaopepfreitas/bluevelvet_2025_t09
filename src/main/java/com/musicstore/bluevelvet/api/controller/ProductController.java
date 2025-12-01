@@ -1,7 +1,9 @@
 package com.musicstore.bluevelvet.api.controller;
 
 import com.musicstore.bluevelvet.api.request.ProductRequest;
+import com.musicstore.bluevelvet.api.response.CategoryResponse;
 import com.musicstore.bluevelvet.api.response.ProductResponse;
+import com.musicstore.bluevelvet.domain.service.CategoryService;
 import com.musicstore.bluevelvet.domain.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final ProductService service;
+    private final CategoryService categoryService;
 
     @GetMapping("/{id}")
     @Operation(summary = "Fetch product by id", description = "Fetch a product from the Blue Velvet Music Store")
@@ -59,6 +62,13 @@ public class ProductController {
         log.info("Request received to update the product with id {} with the request {}", id, request);
 
         return ResponseEntity.ok(service.updateProduct(id, request));
+    }
+
+    @GetMapping("/categories_of_product/{id}")
+    @Operation(summary = "show categories of product", description = "List the categories a certain product belongs to.")
+    public ResponseEntity<Page<CategoryResponse>> getCategoriesOfProduct(@PathVariable Long id, Pageable pageable){
+        log.info("Request received to get categories of product with id {}", id);
+        return ResponseEntity.ok(categoryService.findByProductId(id, pageable));
     }
 
 }

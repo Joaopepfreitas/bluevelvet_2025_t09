@@ -147,3 +147,25 @@ VALUES(5, 'electronic dance music', NULL, '73783165-6d3e-480e-9fc2-22c3fc99b02b'
 INSERT INTO category
 (id, name, parent_id, picture_uuid)
 VALUES(6, 'happy hardcore', 5, 'f295a972-dc87-4785-812a-5c2a58044350');
+INSERT INTO category
+(id, name, parent_id, picture_uuid)
+VALUES(7, 'UK House', 5, NULL);
+INSERT INTO category
+(id, name, parent_id, picture_uuid)
+VALUES(14, 'CD', NULL, '');
+
+CREATE TABLE `category_of_product` (
+  `category_id` bigint NOT NULL,
+  `product_id` int NOT NULL,
+  UNIQUE KEY `category_of_product_unique` (`category_id`,`product_id`),
+  KEY `category_of_product_product_FK` (`product_id`),
+  CONSTRAINT `category_of_product_category_FK` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `category_of_product_product_FK` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE
+);
+
+INSERT INTO category_of_product
+(category_id, product_id)
+VALUES(14, 1);
+INSERT INTO category_of_product
+(category_id, product_id)
+VALUES(3, 1);

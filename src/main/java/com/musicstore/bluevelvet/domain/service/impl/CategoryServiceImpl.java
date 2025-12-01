@@ -70,7 +70,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public Page<CategoryResponse> findAll(Pageable pageable){
-        return null;
+
+        return repository.findAll(pageable).map(this::responseFromEntity);
+
     }
 
     public void deleteById(Long id){
@@ -125,6 +127,10 @@ public class CategoryServiceImpl implements CategoryService {
         response.setPictureUrl(getBasePictureUrl() + generatedFileName + ".webp");
         return response;
         
+    }
+
+    public Page<CategoryResponse> findByProductId(Long id, Pageable pageable){
+        return repository.findByProductId(id, pageable).map(this::responseFromEntity);
     }
 
 

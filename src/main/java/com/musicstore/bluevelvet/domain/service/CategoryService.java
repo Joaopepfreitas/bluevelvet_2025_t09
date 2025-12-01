@@ -21,6 +21,8 @@ public interface CategoryService {
 
     CategoryResponse updateCategory(Long id, CategoryRequest request);
 
-    public CategoryResponse setPictureOfCategory(Long id, MultipartFile file) throws Exception;
+    CategoryResponse setPictureOfCategory(Long id, MultipartFile file) throws Exception;
+
+    Page<CategoryResponse> findByProductId(Long id, Pageable pageable);
 
 }
