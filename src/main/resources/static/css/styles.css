@@ -1,45 +1,256 @@
-/*
-TRABALHO: Criei uma folha de estilo inicial para facilitar o  trabalho, mas
-sinta-se à vontade em alterá-lo completamente de forma a tornar a aplicação mais
-"bonita"e lembrando sempre de testar o layout responsivo de sua soluçõa.
- */
-
-.container {
-    width: 80%;
-    margin: auto;
-    padding: 20px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+/* ============================================================
+   1. RESET & GLOBAL
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(120deg, #1c0f33, #3d1c71);
+    min-height: 100vh;
+    padding: 30px;
+    color: #2b2b2b;
+}
+
+/* ============================================================
+   2. CONTAINER CENTRAL
+   ============================================================ */
+.container {
+    width: 92%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 35px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+h1, h2, h3 {
+    margin-bottom: 18px;
+    color: #2c2c2c;
+}
+
+/* ============================================================
+   3. FORMULÁRIOS
+   ============================================================ */
 form {
+    background: #f7f8fc;
+    border: 1px solid #e7e9ef;
+    padding: 18px 20px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
 }
 
-#productControls {
-    margin-top: 15px;
-    margin-bottom: 30px;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: 1px solid #cfd3da;
+    transition: 0.25s;
 }
 
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #3d1c71;
+    box-shadow: 0 0 5px rgba(61, 28, 113, 0.35);
+}
+
+/* ============================================================
+   4. BOTÕES
+   ============================================================ */
+button, .btn, a.button-link {
+    padding: 10px 20px;
+    background: #3d1c71;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+button:hover, .btn:hover, a.button-link:hover {
+    background: #5b2fa1;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(61, 28, 113, 0.35);
+}
+
+.btn-danger {
+    background: #d92632;
+}
+.btn-danger:hover {
+    background: #b71e27;
+}
+
+/* ============================================================
+   5. TABELA
+   ============================================================ */
+.table-responsive {
+    overflow-x: auto;
+}
 
 table {
     width: 100%;
-    border-collapse: collapse; /* Ensures borders are not double-spaced */
+    border-collapse: collapse;
+    margin-top: 22px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+thead th {
+    background: #3d1c71;
+    color: white;
+    padding: 14px;
+    text-align: left;
+    font-size: 15px;
 }
 
 th, td {
-    border: 1px solid #ddd; /* Creates a light gray border */
-    padding: 8px; /* Adds some space inside the cells */
-    text-align: left; /* Aligns text to the left */
+    padding: 14px 18px;
+    font-size: 15px;
+    border-bottom: 1px solid #ececec;
 }
 
-/* Center-align only the images in the second column */
-td:nth-child(2) {
+tbody tr:nth-child(even) {
+    background: #f7f7f7;
+}
+
+tbody tr:hover {
+    background: #ece7f5;
+    transition: 0.2s;
+}
+
+td img {
+    width: 60px;
+    border-radius: 6px;
+}
+
+/* ============================================================
+   6. PAGINAÇÃO
+   ============================================================ */
+.pagination {
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.pagination a {
+    padding: 8px 14px;
+    background: #3a1c71;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.pagination a:hover {
+    background: #5c33a6;
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   7. DASHBOARD CARDS
+   ============================================================ */
+.dashboard-card {
+    background: linear-gradient(135deg, #4c2ca3, #34186e);
+    color: white;
+    border-radius: 14px;
+    padding: 22px;
     text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    transition: 0.25s;
+    display: inline-block;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================
+   8. STATUS BADGES
+   ============================================================ */
+.status-enabled {
+    background: #d4f6da;
+    color: #1f8a37;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.status-disabled {
+    background: #ffe1e1;
+    color: #b10f0f;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* ============================================================
+   9. LOGIN PAGE
+   ============================================================ */
+#login_page_container {
+    background-image: url("http://localhost:32791/pics/bouncer.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+#login-form {
+    background-color: rgba(255, 255, 255, 0.65);
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.form-checkbox {
+    display: flex;
+    align-items: center;   /* alinha checkbox e label na mesma linha */
+    gap: 5px;   /* espaço entre checkbox e texto */
+    width: 10%; /* garante alinhamento com os outros campos */
+    margin: 5px 0;
+}
+
+.form-checkbox input[type="checkbox"] {
+    margin: 0; /* remove margens que podem causar centralização */
+}
+
+
+
+
+/* ============================================================
+   10. MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        border-radius: 0;
+    }
+
+    button, .btn {
+        width: 100%;
+    }
+
+    table {
+        font-size: 14px;
+    }
 }

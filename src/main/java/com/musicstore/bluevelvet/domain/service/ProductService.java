@@ -111,4 +111,8 @@ public class  ProductService {
         return ProductConverter.convertToProductResponse(updatedProduct);
     }
 
+
+    public Page<ProductResponse> findByCategoryId(Long id, Pageable pageable) {
+        return repository.getprod_cat(id, pageable).map(ProductConverter::convertToProductResponse);
+    }
 }
