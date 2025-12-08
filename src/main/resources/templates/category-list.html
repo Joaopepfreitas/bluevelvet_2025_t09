@@ -9,49 +9,159 @@
 
 <body>
 
-<!-- ✅ CONTAINER -->
+<div style="display: flex; justify-content: flex-end; padding: 10px 20px; gap: 15px; align-items: center;">
+
+    <!-- Logout -->
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button class="btn btn-danger">Logout</button>
+    </form>
+</div>
+
+
+<!--  CONTAINER -->
 <div class="container">
 
-    <!-- TÍTULO + BOTÕES -->
-    <div class="category-header">
-        <h1>📂 Categorias</h1>
-        <div>
-            <a href="/categories/new" class="btn btn-primary">Nova Categoria</a>
-            <a href="/dashboard" class="btn btn-secondary">Voltar</a>
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+        <div style="font-weight: bold; font-size: 15px;">
+            Welcome, <span th:text="${username}"></span>
+            (<span th:text="${role}"></span>)
         </div>
     </div>
 
-    <!-- ✅ TABELA -->
+
+    <!-- HEADER DA PÁGINA -->
+    <div class="category-header">
+        <h1>📂 List Categories</h1>
+        <a href="/categories/new" class="btn btn-primary">New Category</a>
+        <a href="/dashboard" class="btn btn-secondary">Dashboard</a>
+
+    </div>
+
+
+    <!-- FORMULÁRIO DE BUSCA -->
+    <form method="get" action="/categories"
+          style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center;">
+
+        <input type="text" name="search" th:value="${search}" placeholder="Search category..." />
+
+        <button type="submit" class="btn btn-primary">Search</button>
+
+        <!-- BOTÃO RESET -->
+        <a href="/categories" class="btn btn-secondary">Reset</a>
+
+        <input type="hidden" name="sort" th:value="${sort}">
+        <input type="hidden" name="dir" th:value="${dir}">
+    </form>
+
+
+
+    <!-- TABELA -->
     <div class="table-responsive">
         <table>
             <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Status</th>
-                <th>Ações</th>
+            <tr style="background: #3a0a78;">
+                <!-- NAME -->
+                <th style="color: #ffffff; font-weight: 600; padding-left: 10px;">
+                    <a th:href="@{/categories(sort='name', dir=${dir == 'asc' ? 'desc' : 'asc'}, search=${search})}"
+                       style="color: #f8e9ff; text-decoration: none;">
+                        Name
+                    </a>
+                </th>
+
+                <!-- STATUS -->
+                <th style="color: #ffffff; font-weight: 600;">
+                    <a th:href="@{/categories(sort='enabled', dir=${dir == 'asc' ? 'desc' : 'asc'}, search=${search})}"
+                       style="color: #f8e9ff; text-decoration: none;">
+                        Status
+                    </a>
+                </th>
+
+                <!-- ACTIONS  -->
+                <th style="text-align: right; color: #f8e9ff; font-weight: 600; padding-right: 160px;">
+                    Actions
+                </th>
             </tr>
             </thead>
 
+
             <tbody>
-            <tr th:each="cat : ${categories}">
-                <td th:text="${cat.name}"></td>
 
-                <!-- ✅ STATUS ESTILIZADO -->
-                <td>
-                    <span th:class="${cat.enabled} ? 'category-status status-enabled' : 'category-status status-disabled'"
-                          th:text="${cat.enabled} ? 'Ativa' : 'Inativa'"></span>
-                </td>
+            <th:block th:each="cat : ${categories.content}">
 
-                <!-- ✅ BOTÕES DE AÇÃO -->
-                <td class="action-buttons">
-                    <a th:href="@{/categories/edit/{id}(id=${cat.id})}" class="btn btn-primary">Editar</a>
-                    <a th:href="@{/categories/toggle/{id}(id=${cat.id})}" class="btn btn-secondary">Ativar/Desativar</a>
-                    <a th:href="@{/categories/delete/{id}(id=${cat.id})}" class="btn btn-danger">Excluir</a>
-                </td>
-            </tr>
+                <!-- ROOT CATEGORY -->
+                <tr>
+                    <!-- Nome -->
+                    <td style="font-weight: bold; padding-top: 10px;">
+                        <span th:text="${cat.name}" style="font-size: 16px;"></span>
+                    </td>
+
+                    <!-- STATUS -->
+                    <td th:text="${cat.enabled ? 'Enabled' : 'Disabled'}"
+                        style="font-weight: bold;">
+                    </td>
+
+                    <!-- AÇÕES -->
+                    <td style="text-align: right;">
+                        <a th:href="@{/categories/edit/{id}(id=${cat.id})}" class="btn btn-primary btn-sm">Edit</a>
+                        <a th:href="@{/categories/toggle/{id}(id=${cat.id})}" class="btn btn-secondary btn-sm">Enable/Disable</a>
+                        <a th:href="@{/categories/delete/{id}(id=${cat.id})}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+
+
+                <!-- CHILDREN -->
+                <tr th:each="child : ${childrenMap[cat.id]}">
+
+                    <!-- Nome da subcategoria -->
+                    <td style="padding-left: 40px;">
+                        • <span th:text="${child.name}"></span>
+                    </td>
+
+                    <!-- STATUS da subcategoria -->
+                    <td th:text="${child.enabled ? 'Enabled' : 'Disabled'}"></td>
+
+                    <!-- AÇÕES -->
+                    <td style="text-align: right;">
+                        <a th:href="@{/categories/edit/{id}(id=${child.id})}" class="btn btn-primary btn-sm">Edit</a>
+                        <a th:href="@{/categories/toggle/{id}(id=${child.id})}" class="btn btn-secondary btn-sm">Enable/Disable</a>
+                        <a th:href="@{/categories/delete/{id}(id=${child.id})}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+
+                </tr>
+
+            </th:block>
+
             </tbody>
+
+
         </table>
+
     </div>
+
+    <div class="pagination">
+
+        <!-- First -->
+        <a th:href="@{/categories(page=0, sort=${sort}, dir=${dir}, search=${search})}">&laquo;</a>
+
+        <!-- Prev -->
+        <a th:href="@{/categories(page=${categories.number - 1}, sort=${sort}, dir=${dir}, search=${search})}"
+           th:if="${categories.hasPrevious()}">&lsaquo;</a>
+
+        <!-- Page numbers -->
+        <span th:each="i : ${#numbers.sequence(0, categories.totalPages - 1)}">
+        <a th:href="@{/categories(page=${i}, sort=${sort}, dir=${dir}, search=${search})}"
+           th:text="${i + 1}"
+           th:classappend="${i == categories.number} ? 'active' : ''"></a>
+    </span>
+
+        <!-- Next -->
+        <a th:href="@{/categories(page=${categories.number + 1}, sort=${sort}, dir=${dir}, search=${search})}"
+           th:if="${categories.hasNext()}">&rsaquo;</a>
+
+        <!-- Last -->
+        <a th:href="@{/categories(page=${categories.totalPages - 1}, sort=${sort}, dir=${dir}, search=${search})}">&raquo;</a>
+    </div>
+
 
 </div>
 

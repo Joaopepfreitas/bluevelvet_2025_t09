@@ -9,16 +9,19 @@ import com.musicstore.bluevelvet.infrastructure.entity.Category;
 import com.musicstore.bluevelvet.infrastructure.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 //import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -106,11 +109,75 @@ public class ThymeleafController {
     // ==== CATEGORIES ====
 
     //LISTAR
+    @PreAuthorize("hasRole('Administrator') or hasRole('Editor')")
     @GetMapping("/categories")
-    public String listCategories(Model model) {
-        model.addAttribute("categories", categoryRepository.findAll());
+    public String listCategories(
+            Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "name") String sort,
+            @RequestParam(defaultValue = "asc") String dir,
+            @RequestParam(defaultValue = "") String search
+    ) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        String role = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("ROLE_USER");
+
+        model.addAttribute("username", username);
+        model.addAttribute("role", role);
+
+        Sort.Direction direction = dir.equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sort));
+
+        Page<Category> rootCategories;
+
+        if (search.isEmpty()) {
+            // Sem busca: apenas categorias raiz
+            rootCategories = categoryRepository.findByParentIdIsNull(pageable);
+
+        } else {
+            // Com busca: filtrar APENAS categorias raiz manualmente
+            Page<Category> filtered = categoryRepository.findByNameContainingIgnoreCase(search, pageable);
+
+            // Manter só os ROOTS
+            List<Category> onlyRoots = filtered
+                    .stream()
+                    .filter(cat -> cat.getParentId() == null)
+                    .collect(Collectors.toList());
+
+            rootCategories = new PageImpl<>(
+                    onlyRoots,
+                    pageable,
+                    onlyRoots.size()
+            );
+        }
+
+        // Buscar todas as subcategorias de cada root
+        Map<Long, List<Category>> childrenMap = new HashMap<>();
+
+        rootCategories.forEach(root -> {
+            List<Category> children = categoryRepository.findByParentId(root.getId(), Pageable.unpaged()).getContent();
+            childrenMap.put(root.getId(), children);
+        });
+
+        model.addAttribute("categories", rootCategories);
+        model.addAttribute("childrenMap", childrenMap);
+
+        // manter UI
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir);
+        model.addAttribute("search", search);
+
         return "category-list";
     }
+
+
 
     //FORMULÁRIO NOVA
     @GetMapping("/categories/new")

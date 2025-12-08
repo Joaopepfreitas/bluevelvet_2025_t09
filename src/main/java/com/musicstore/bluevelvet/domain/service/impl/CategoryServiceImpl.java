@@ -10,7 +10,9 @@ import com.musicstore.bluevelvet.infrastructure.repository.CategoryRepository;
 import com.musicstore.bluevelvet.domain.service.MassStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -78,7 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public Page<CategoryResponse> findByName(String name,Pageable pageable){
-        return repository.findByNameLike("%" + name + "%", pageable).map(this::responseFromEntity);
+        return repository.findByNameContainingIgnoreCase(name, pageable).map(this::responseFromEntity);
     }
 
     public void deleteById(Long id){
@@ -180,6 +182,29 @@ public class CategoryServiceImpl implements CategoryService {
         repository.save(c9);
         repository.save(c10);
     }
+
+    public Page<CategoryResponse> findTopLevelCategories(int page, String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by("name").descending()
+                : Sort.by("name").ascending();
+
+        Pageable pageable = PageRequest.of(page, 5, sort);
+
+        return repository.findByParentIdIsNull(pageable).map(this::responseFromEntity);
+    }
+
+    public Page<CategoryResponse> findChildren(Long parentId, String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by("name").descending()
+                : Sort.by("name").ascending();
+
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, sort);
+
+        return repository.findByParentId(parentId, pageable).map(this::responseFromEntity);
+    }
+
 
 
 
