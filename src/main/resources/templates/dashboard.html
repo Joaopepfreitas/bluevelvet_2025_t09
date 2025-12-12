@@ -52,6 +52,12 @@
     </div>
 
     <h2>Categories</h2>
+    <!-- Botão de exportar CSV (Apenas ADMIN) -->
+    <div sec:authorize="hasRole('Administrator')" style="margin-bottom: 15px;">
+        <a href="/api/categories/export" class="dashboard-card" style="background:#27ae60; color:white;">
+            📤 Export Categories (CSV)
+        </a>
+    </div>
 
     <table>
         <thead>
