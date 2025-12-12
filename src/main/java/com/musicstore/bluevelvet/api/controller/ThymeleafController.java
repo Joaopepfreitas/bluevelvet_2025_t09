@@ -283,6 +283,15 @@ public class ThymeleafController {
     }
 
 
+    @GetMapping("/access-denied")
+    public String accessDenied(Model model) {
+
+        model.addAttribute("message",
+                "Você não tem permissão para acessar esta página.");
+
+        return "access-denied";
+    }
+
 
 
 }
