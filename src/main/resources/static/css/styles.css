@@ -262,3 +262,9 @@ td img {
     margin-bottom: 15px;
     border-radius: 5px;
 }
+
+.disabled-btn {
+    pointer-events: none;   /* Não clica */
+    opacity: 0.5;           /* Aparência desativada */
+    cursor: not-allowed;
+}
